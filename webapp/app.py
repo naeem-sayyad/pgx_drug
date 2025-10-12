@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import math
+import os
 import re
 import time
 from pathlib import Path
@@ -38,7 +39,7 @@ INVALID_PMID_VALUES = {"-", "na", "n/a", "null", "none", "0"}
 
 BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
-SUMMARY_PATH = PROJECT_ROOT / "data" / "final_payload.summarized.csv"
+SUMMARY_PATH = Path(os.getenv("SUMMARY_PATH", PROJECT_ROOT / "data" / "final_payload.summarized.csv"))
 
 UPLOAD_DIR = BASE_DIR / "uploads"
 EXPORT_DIR = BASE_DIR / "exports"
