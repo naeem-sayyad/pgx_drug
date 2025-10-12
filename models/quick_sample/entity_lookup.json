@@ -1,0 +1,34 @@
+{
+  "genes": [
+    "ADH1B",
+    "ADRB2",
+    "ALDH2",
+    "ALPL",
+    "CYP2C19",
+    "CYP2D6",
+    "ERCC1",
+    "GSTM1",
+    "HINT1",
+    "HLA-B",
+    "RGS4",
+    "TPMT",
+    "VKORC1"
+  ],
+  "drugs": [
+    "abacavir",
+    "aspirin",
+    "bevacizumab",
+    "carbamazepine",
+    "clopidogrel",
+    "codeine",
+    "cyclophosphamide",
+    "epirubicin",
+    "etanercept",
+    "ethanol",
+    "fentanyl",
+    "mercaptopurine",
+    "nicotine",
+    "quetiapine",
+    "warfarin"
+  ]
+}

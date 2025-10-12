@@ -1,0 +1,74 @@
+{
+  "fields": [
+    {
+      "name": "Gene_enc",
+      "kind": "numeric"
+    },
+    {
+      "name": "drug_name_pgx_enc",
+      "kind": "numeric"
+    },
+    {
+      "name": "atc_level2_clean_enc",
+      "kind": "numeric"
+    },
+    {
+      "name": "atc_level4_clean_enc",
+      "kind": "numeric"
+    },
+    {
+      "name": "Significance_enc",
+      "kind": "numeric"
+    },
+    {
+      "name": "pmid_n",
+      "kind": "numeric"
+    },
+    {
+      "name": "is_rsid",
+      "kind": "numeric"
+    },
+    {
+      "name": "is_starallele",
+      "kind": "numeric"
+    },
+    {
+      "name": "has_copy_number",
+      "kind": "numeric"
+    },
+    {
+      "name": "variant_len",
+      "kind": "numeric"
+    },
+    {
+      "name": "sentence_len_w",
+      "kind": "numeric"
+    },
+    {
+      "name": "notes_len_w",
+      "kind": "numeric"
+    },
+    {
+      "name": "row_id",
+      "kind": "categorical",
+      "mapping": [
+        "7ec7a72a888abaf9",
+        "a8cd0210adb5ff64",
+        "d9aef6d5a1fb626f",
+        "1762d404475289e8",
+        "942d95a8cb0360fc",
+        "561958756453469f",
+        "0e683a013e8492d6",
+        "5d9da49ce02ce1cd",
+        "5d4e534863839163",
+        "65924a4bdf4673d2",
+        "256b1b47d2bda540",
+        "ad310e5b4819e173",
+        "697c6f6c8975be88",
+        "597e7ed8eb43364f",
+        "d37416c97fb76e50",
+        "64417c1aca70ebab"
+      ]
+    }
+  ]
+}
