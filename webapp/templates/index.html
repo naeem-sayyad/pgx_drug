@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PGx AI System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+    <div class="background-video">
+      <video
+        id="idleVideo"
+        class="background-video__media active"
+        autoplay
+        muted
+        loop
+        playsinline
+      >
+        <source src="{{ url_for('static', filename='video/idle.mp4') }}" type="video/mp4">
+      </video>
+      <video
+        id="analysisVideo"
+        class="background-video__media"
+        autoplay
+        muted
+        loop
+        playsinline
+      >
+        <source src="{{ url_for('static', filename='video/analysis.mp4') }}" type="video/mp4">
+      </video>
+    </div>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="tagline fade-in">DNA is the answer.</p>
+          <h1 class="headline fade-in delay-1">
+            Welcome to the Advanced DNA Analysis System — New-Age Pharmacogenomic Precision.
+          </h1>
+          <p class="subheadline fade-in delay-2">
+            Deoxy-ribonucleic Acid High-Throughput Toxicity Prediction, so you know you&apos;re always safe. — Safety. Engineered in every strand. By design. Always.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel upload-panel fade-in delay-3" id="uploadPanel">
+        <form id="analysisForm" class="analysis-form">
+          <label class="form-label" for="dnaFile">Upload your DNA file</label>
+          <input class="file-input" type="file" id="dnaFile" name="dnaFile" accept=".txt,.vcf,.json,.csv" required>
+
+          <div class="drug-field" id="drugField">
+            <label class="form-label" for="drugInput">Enter the drug (optional)</label>
+            <input type="text" id="drugInput" name="drug" placeholder="e.g., Carbamazepine">
+          </div>
+
+          <button type="submit" id="analyzeButton" class="primary-button" disabled>
+            Run PGx AI Analysis
+          </button>
+        </form>
+      </section>
+
+      <section class="panel status-panel hidden" id="statusPanel">
+        <div class="status-content">
+          <div class="animated-ring"></div>
+          <p class="status-text" id="statusText">Running Advanced DNA Analysis on this Gene.</p>
+          <p class="sub-status" id="countdownText"></p>
+        </div>
+      </section>
+
+      <section class="panel results-panel hidden" id="resultsPanel">
+        <h2>DNA analysis completed.</h2>
+        <div id="summaryList" class="summary-list"></div>
+        <div class="actions">
+          <button class="primary-button" id="downloadCsvButton" disabled>Download CSV</button>
+          <button class="secondary-button" id="chatbotToggle">Ask PGx AI</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="chatbot hidden" id="chatbotPanel">
+      <header>
+        <h3>PGx AI Assistant</h3>
+        <button id="chatbotClose" aria-label="Close chatbot">×</button>
+      </header>
+      <div class="chat-log" id="chatLog">
+        <p class="bot-message">Upload a DNA file to begin exploring the ensemble evidence.</p>
+      </div>
+      <form class="chat-input-container" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Type your question..." disabled>
+        <button type="submit" disabled>Send</button>
+      </form>
+    </aside>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
