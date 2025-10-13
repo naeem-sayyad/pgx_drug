@@ -98,21 +98,27 @@ def _safe_int(value: Any, default: int = 0) -> int:
     return int(round(_safe_float(value, default)))
 
 
+def _normalize_pmid_value(raw: str | None) -> str | None:
+    if not raw:
+        return None
+    cleaned = raw.strip()
+    if not cleaned or cleaned.lower() in INVALID_PMID_VALUES:
+        return None
+    digits = "".join(ch for ch in cleaned if ch.isdigit())
+    return digits or None
+
+
 def _collect_pmids(row: pd.Series) -> list[str]:
     pmids: list[str] = []
-    primary = _as_text(row.get("best_pmid"))
-    if primary and primary.lower() not in INVALID_PMID_VALUES:
+    primary = _normalize_pmid_value(_as_text(row.get("best_pmid")))
+    if primary:
         pmids.append(primary)
     raw_pmids = _as_text(row.get("pmids"))
     if raw_pmids:
         for token in PMID_SPLIT_RE.split(raw_pmids):
-            token = token.strip()
-            if (
-                token
-                and token.lower() not in INVALID_PMID_VALUES
-                and token not in pmids
-            ):
-                pmids.append(token)
+            normalized = _normalize_pmid_value(token)
+            if normalized and normalized not in pmids:
+                pmids.append(normalized)
     return pmids
 
 
@@ -125,11 +131,10 @@ def _is_valid_pmid(pmid: str | None) -> bool:
 
 
 def _pmid_link(pmid: str) -> str | None:
-    if not pmid:
+    normalized = _normalize_pmid_value(pmid)
+    if not normalized:
         return None
-    if pmid.isdigit():
-        return f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
-    return None
+    return f"https://pubmed.ncbi.nlm.nih.gov/{normalized}/"
 
 
 def build_evidence_cards(row: pd.Series) -> tuple[list[dict[str, Any]], list[str]]:
