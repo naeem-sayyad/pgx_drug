@@ -98,6 +98,42 @@ def _safe_int(value: Any, default: int = 0) -> int:
     return int(round(_safe_float(value, default)))
 
 
+def _normalize_drug_name(value: str | None) -> str:
+    return normalize(value).lower()
+
+
+def _filter_by_drug_name(df: pd.DataFrame, raw_query: str) -> tuple[pd.DataFrame, str | None]:
+    query = _normalize_drug_name(raw_query)
+    if not query:
+        return df, None
+
+    drug_series = df["drug_name"].astype(str)
+    normalized_series = drug_series.apply(_normalize_drug_name)
+
+    exact_mask = normalized_series == query
+    if exact_mask.any():
+        matched = drug_series[exact_mask].iloc[0]
+        return df[exact_mask].copy(), matched
+
+    unique_map: dict[str, str] = {}
+    for raw_name, norm_name in zip(drug_series, normalized_series):
+        if norm_name and norm_name not in unique_map:
+            unique_map[norm_name] = raw_name
+
+    close_matches = difflib.get_close_matches(query, unique_map.keys(), n=1, cutoff=0.72)
+    if close_matches:
+        matched_norm = close_matches[0]
+        matched_raw = unique_map[matched_norm]
+        return df[normalized_series == matched_norm].copy(), matched_raw
+
+    substring_mask = normalized_series.str.contains(re.escape(query))
+    if substring_mask.any():
+        matched_raw = drug_series[substring_mask].iloc[0]
+        return df[substring_mask].copy(), matched_raw
+
+    return df, None
+
+
 def _normalize_pmid_value(raw: str | None) -> str | None:
     if not raw:
         return None
@@ -367,11 +403,9 @@ def analyze():
 
             analysis_df = payload_df.copy()
             if optional_drug:
-                filtered = analysis_df[
-                    analysis_df["drug_name"].str.lower() == optional_drug.lower()
-                ]
-                if not filtered.empty:
-                    analysis_df = filtered
+                analysis_df, matched_drug = _filter_by_drug_name(analysis_df, optional_drug)
+                if matched_drug:
+                    used_drug = matched_drug
             gene_display = analysis_df.iloc[0]["Gene"] if not analysis_df.empty else ""
     except ValueError as exc:
         abort(400, description=str(exc))
