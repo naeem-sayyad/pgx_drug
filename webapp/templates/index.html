@@ -82,11 +82,16 @@
         <h3>PGx AI Assistant</h3>
         <button id="chatbotClose" aria-label="Close chatbot">×</button>
       </header>
+      <div class="chat-suggestions" id="chatSuggestions">
+        <button type="button" data-chat-suggestion="Give me a quick summary of this gene-drug pair.">Quick summary</button>
+        <button type="button" data-chat-suggestion="Show the evidence PMIDs that support this analysis.">Evidence</button>
+        <button type="button" data-chat-suggestion="How confident is the ensemble prediction and why?">Model confidence</button>
+      </div>
       <div class="chat-log" id="chatLog">
         <p class="bot-message">Upload a DNA file to begin exploring the ensemble evidence.</p>
       </div>
       <form class="chat-input-container" id="chatForm">
-        <input type="text" id="chatInput" placeholder="Type your question..." disabled>
+        <input type="text" id="chatInput" placeholder="Ask about toxicity, PMIDs, or clinic" disabled>
         <button type="submit" disabled>Send</button>
       </form>
     </aside>

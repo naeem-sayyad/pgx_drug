@@ -473,6 +473,31 @@ main {
   flex-direction: column;
   overflow: hidden;
   backdrop-filter: blur(18px);
+  z-index: 1200;
+}
+
+.chat-suggestions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 0;
+  flex-wrap: wrap;
+  background: rgba(26, 32, 56, 0.78);
+}
+
+.chat-suggestions button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  background: rgba(124, 58, 237, 0.25);
+  color: rgba(226, 232, 240, 0.92);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chat-suggestions button:hover {
+  background: rgba(124, 58, 237, 0.45);
+  transform: translateY(-1px);
 }
 
 .chatbot header {
@@ -518,6 +543,11 @@ main {
   border: 1px solid rgba(99, 102, 241, 0.24);
   align-self: flex-start;
   max-width: 100%;
+}
+
+.chat-message.typing {
+  opacity: 0.7;
+  font-style: italic;
 }
 
 .chat-message.user {

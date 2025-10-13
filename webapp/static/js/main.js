@@ -15,6 +15,7 @@
   const chatInput = document.getElementById("chatInput");
   const chatSubmit = chatForm ? chatForm.querySelector("button") : null;
   const chatLog = document.getElementById("chatLog");
+  const chatSuggestions = document.getElementById("chatSuggestions");
   const idleVideo = document.getElementById("idleVideo");
   const analysisVideo = document.getElementById("analysisVideo");
 
@@ -61,18 +62,20 @@
       : "Type your question...";
   }
 
-  function appendChatMessage(role, text, citations = []) {
+  function appendChatMessage(role, text, citations = [], options = {}) {
     if (!chatLog) {
-      return;
+      return null;
     }
     const container = document.createElement("div");
     container.className = `chat-message ${role}`;
-
+    if (options.typing) {
+      container.classList.add("typing");
+    }
     const paragraph = document.createElement("p");
     paragraph.textContent = text;
     container.appendChild(paragraph);
 
-    if (Array.isArray(citations) && citations.length > 0) {
+    if (!options.typing && Array.isArray(citations) && citations.length > 0) {
       const citationList = document.createElement("ul");
       citationList.className = "citation-list";
       citations.forEach((entry) => {
@@ -115,6 +118,58 @@
     chatLog.appendChild(container);
     chatLog.scrollTop = chatLog.scrollHeight;
     chatLog.dataset.active = "1";
+    return container;
+  }
+
+  function updateChatMessage(container, text, citations = []) {
+    if (!container) {
+      return;
+    }
+    container.classList.remove("typing");
+    const paragraphs = container.querySelectorAll("p");
+    if (paragraphs.length > 0) {
+      paragraphs[0].textContent = text;
+    }
+    container.querySelectorAll(".citation-list").forEach((node) => node.remove());
+    if (Array.isArray(citations) && citations.length > 0) {
+      const citationList = document.createElement("ul");
+      citationList.className = "citation-list";
+      citations.forEach((entry) => {
+        const item = document.createElement("li");
+        const pmidText = entry.pmid ? `PMID ${entry.pmid}` : "Evidence";
+        const titleText = entry.title || pmidText;
+        if (entry.url) {
+          const link = document.createElement("a");
+          link.href = entry.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = titleText;
+          item.appendChild(link);
+        } else {
+          item.textContent = titleText;
+        }
+        const metaParts = [];
+        if (entry.journal) {
+          metaParts.push(entry.journal);
+        }
+        if (entry.year) {
+          metaParts.push(entry.year);
+        }
+        if (metaParts.length > 0) {
+          const metaSpan = document.createElement("span");
+          metaSpan.className = "reference-meta";
+          metaSpan.textContent = metaParts.join(" · ");
+          item.appendChild(metaSpan);
+        }
+        const pmidBadge = document.createElement("span");
+        pmidBadge.className = "pmid-badge";
+        pmidBadge.textContent = pmidText;
+        item.appendChild(pmidBadge);
+
+        citationList.appendChild(item);
+      });
+      container.appendChild(citationList);
+    }
   }
 
   function resetState() {
@@ -394,6 +449,25 @@
     chatbotPanel.classList.add("hidden");
   });
 
+  if (chatSuggestions) {
+    chatSuggestions.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-chat-suggestion]");
+      if (!button || !chatInput) {
+        return;
+      }
+      const text = button.dataset.chatSuggestion || "";
+      if (!text) {
+        return;
+      }
+      chatInput.value = text;
+      if (!chatInput.disabled && currentAnalysisId && chatForm) {
+        chatForm.requestSubmit();
+      } else if (!chatInput.disabled) {
+        chatInput.focus();
+      }
+    });
+  }
+
   if (chatForm) {
     chatForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -414,6 +488,7 @@
       appendChatMessage("user", message);
       chatInput.value = "";
       setChatEnabled(false);
+      const typingBubble = appendChatMessage("bot", "Analyzing…", [], { typing: true });
       try {
         const response = await fetch("/chat", {
           method: "POST",
@@ -430,14 +505,14 @@
           throw new Error(errorText || "Unable to retrieve a response.");
         }
         const payload = await response.json();
-        appendChatMessage(
-          "bot",
+        updateChatMessage(
+          typingBubble,
           payload.reply || "I could not find evidence for that request.",
           payload.citations
         );
       } catch (error) {
-        appendChatMessage(
-          "bot",
+        updateChatMessage(
+          typingBubble,
           error.message || "Something went wrong while consulting the evidence."
         );
       } finally {
